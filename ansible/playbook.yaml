@@ -51,6 +51,24 @@
           - docker
         append: true
 
+    - name: Add Terraform GPG apt Key
+      ansible.builtin.apt_key:
+        url: https://apt.releases.hashicorp.com/gpg
+        state: present
+
+    - name: Add Terraform Repository
+      ansible.builtin.apt_repository:
+        repo: deb https://apt.releases.hashicorp.com $(lsb_release -cs) main
+        state: present
+        update_cache: true
+
+    - name: Install Terraform
+      ansible.builtin.apt:
+        pkg:
+          - terraform
+        state: present
+        update_cache: true
+
     - name: Install minikube
       ansible.builtin.apt:
         deb: "https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb"
