@@ -9,13 +9,22 @@ on:
       - main
 
 jobs:
-  deploy:
-    runs-on: self-hosted
-    
+  write-secret:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout the code
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-        with:
-          args: apply
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Write secret into a file
+        run: |
+          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig
+
+      - name:  Apply kubectl
+        run: |
+          kubectl --kubeconfig kubeconfig apply -f k8s/deployment.yaml
+          kubectl --kubeconfig kubeconfig apply -f k8s/service.yaml
+
+      - name: Delete secret
+        run: |
+          rm kubeconfig
