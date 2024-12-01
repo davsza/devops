@@ -1,0 +1,8 @@
+FROM ghcr.io/actions/actions-runner:2.321.0
+
+ARG GITHUB_URL
+
+RUN --mount=type=secret,id=gh_token,env=GITHUB_TOKEN \
+    ./config.sh --unattended --url $GITHUB_URL --token $GITHUB_TOKEN
+
+ENTRYPOINT [ "./run.sh" ]
