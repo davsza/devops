@@ -18,6 +18,9 @@ jobs:
 
       - name: Write secret into a file
         run: |
+          kubectl config set-cluster minikube --server=https://192.168.49.2:8443 --certificate-authority=${{ secrets.CA_CRT }} --embed-certs=true
+          kubectl config set-credentials minikube --client-certificate=${{ secrets.CA_CRT }} --client-key=${{ secrets.CA_KEY }} --embed-certs=true
+          kubectl config set-context minikube --cluster=minikube --user=minikube
           echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig
 
       - name:  Apply kubectl
