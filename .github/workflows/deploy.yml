@@ -1,19 +1,16 @@
-name: Deploy to Kubernetes
+name: Deploy
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_run:
+    workflows: [Delivery]
+    types: [completed]
 
 jobs:
-  write-secret:
+  deploy:
     runs-on: self-hosted
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v2
 
       - name: Kubectl
@@ -27,8 +24,9 @@ jobs:
           kubectl config set-context minikube --cluster=minikube --user=minikube
           kubectl config use-context minikube
           kubectl apply -f k8s/deployment.yaml --validate=false
-          kubectl apply -f k8s/services.yaml
-      - name: Delete secret
+          kubectl apply -f k8s/service.yaml
+
+      - name: Delete files
         run: |
           rm ca.crt
           rm client.crt
