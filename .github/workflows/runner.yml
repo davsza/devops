@@ -28,7 +28,6 @@ jobs:
           kubectl config use-context minikube
           kubectl apply -f k8s/deployment.yaml --validate=false
           kubectl apply -f k8s/services.yaml
-
       - name: Delete secret
         run: |
           rm ca.crt
