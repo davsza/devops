@@ -3,33 +3,34 @@ name: Deploy to Kubernetes
 on:
   push:
     branches:
-      - main
+      - develop
   pull_request:
     branches:
-      - main
+      - develop
 
 jobs:
   write-secret:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Write secret into a file
+      - name: Kubectl
         run: |
-          echo "${{ secrets.CA_CRT }}" > crt
-          echo "${{ secrets.CA_KEY }}" > key
-          kubectl config set-cluster minikube --server=https://192.168.49.2:8443 --certificate-authority=crt --embed-certs=true
-          kubectl config set-credentials minikube --client-certificate=crt --client-key=key --embed-certs=true
+          echo "${{ secrets.CA_CRT }}" > ca.crt
+          echo "${{ secrets.CLIENT_CRT }}" > client.crt
+          echo "${{ secrets.CLIENT_KEY }}" > client.key
+          
+          kubectl config set-cluster minikube --server=https://192.168.49.2:8443 --certificate-authority=ca.crt --embed-certs=true
+          kubectl config set-credentials minikube --client-certificate=client.crt --client-key=client.key --embed-certs=true
           kubectl config set-context minikube --cluster=minikube --user=minikube
-
-      - name:  Apply kubectl
-        run: |
+          kubectl config use-context minikube
           kubectl apply -f k8s/deployment.yaml --validate=false
           kubectl apply -f k8s/service.yaml
 
       - name: Delete secret
         run: |
-          rm crt
-          rm key
+          rm ca.crt
+          rm client.crt
+          rm client.key
