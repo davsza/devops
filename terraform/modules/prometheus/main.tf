@@ -29,6 +29,5 @@ resource "docker_container" "prometheus" {
 
   networks_advanced {
     name = var.network
-    ipv4_address = "172.18.0.6"
   }
 }
