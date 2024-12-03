@@ -23,7 +23,7 @@ jobs:
           kubectl config set-credentials minikube --client-certificate=client.crt --client-key=client.key --embed-certs=true
           kubectl config set-context minikube --cluster=minikube --user=minikube
           kubectl config use-context minikube
-          kubectl apply -f k8s/deploy.yaml
+          kubectl apply -f k8s/deployment.yaml
           kubectl rollout restart deployment devops
           kubectl apply -f k8s/services.yaml
 
