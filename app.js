@@ -30,7 +30,7 @@ app.get('/metrics', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.send('Stroh:)');
+    res.send('Legendario:)');
 });
 
 app.listen(3000, () => {
