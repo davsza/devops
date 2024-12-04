@@ -74,19 +74,6 @@
         deb: "https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb"
         state: present
 
-    - name: Download helm
-      ansible.builtin.unarchive:
-        src: "https://get.helm.sh/helm-v3.5.4-linux-amd64.tar.gz"
-        remote_src: true
-        dest: /tmp
-
-    - name: Install helm
-      ansible.builtin.copy:
-        src: /tmp/linux-amd64/helm
-        remote_src: true
-        dest: /usr/local/bin/helm
-        mode: "0755"
-
     - name: Install kubectl
       ansible.builtin.get_url:
         url: "https://dl.k8s.io/release/v1.31.3/bin/linux/amd64/kubectl"
@@ -97,5 +84,21 @@
       ansible.builtin.command: minikube start --driver=docker
       register: minikube_start
       changed_when: "'Running' not in minikube_start.stdout"
+      ignore_errors: true
+      become: false
+
+    - name: Init Terraform
+      ansible.builtin.command:
+        cmd: terraform init
+        chdir: ../terraform
+      ignore_errors: true
+      become: false
+
+    - name: Apply Terraform
+      ansible.builtin.command:
+        cmd: terraform apply -no-color -var github_token="{{ github_token }}" -auto-approve
+        chdir: ../terraform
+      register: terraform_apply_output
+      changed_when: "'0 changed' not in terraform_apply_output.stdout"
       ignore_errors: true
       become: false

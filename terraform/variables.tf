@@ -16,3 +16,9 @@ variable "app_port" {
   type        = number
   default     = 3000
 }
+
+variable "github_token" {
+  description = "Github token"
+  type        = string
+  sensitive   = true
+}

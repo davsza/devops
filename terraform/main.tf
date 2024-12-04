@@ -12,6 +12,15 @@ provider "docker" {
   host = "unix:///var/run/docker.sock"
 }
 
+# Runner modul
+module "runner" {
+  source = "./modules/runner"
+  
+  network = "minikube"
+  github_token = var.github_token
+  github_url = "https://github.com/davsza/devops/"
+}
+
 # Prometheus modul
 module "prometheus" {
   source = "./modules/prometheus"
